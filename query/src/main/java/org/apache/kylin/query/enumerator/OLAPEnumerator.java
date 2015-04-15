@@ -26,7 +26,6 @@ import net.hydromatic.linq4j.Enumerator;
 import net.hydromatic.optiq.DataContext;
 import net.hydromatic.optiq.jdbc.OptiqConnection;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.kylin.metadata.filter.CompareTupleFilter;
 import org.apache.kylin.metadata.filter.TupleFilter;
 import org.apache.kylin.metadata.tuple.ITuple;
@@ -92,7 +91,8 @@ public class OLAPEnumerator implements Enumerator<Object[]> {
 
     @Override
     public void close() {
-        IOUtils.closeQuietly(cursor);
+        if (cursor != null)
+            cursor.close();
     }
 
     private Object[] convertCurrentRow(ITuple tuple) {
