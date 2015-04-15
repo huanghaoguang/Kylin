@@ -26,6 +26,7 @@ import net.hydromatic.linq4j.Enumerator;
 import net.hydromatic.optiq.DataContext;
 import net.hydromatic.optiq.jdbc.OptiqConnection;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.kylin.metadata.filter.CompareTupleFilter;
 import org.apache.kylin.metadata.filter.TupleFilter;
 import org.apache.kylin.metadata.tuple.ITuple;
@@ -91,18 +92,15 @@ public class OLAPEnumerator implements Enumerator<Object[]> {
 
     @Override
     public void close() {
-        if (cursor != null) {
-            cursor.close();
-        }
+        IOUtils.closeQuietly(cursor);
     }
 
     private Object[] convertCurrentRow(ITuple tuple) {
 
         int hashCode = tuple.getAllFields().hashCode();
 
-
         // build field index map, if the map doesn't exit or the tuple fields structure changed
-       if (this.fieldIndexes == null || tupleFieldsHash != hashCode) {
+        if (this.fieldIndexes == null || tupleFieldsHash != hashCode) {
             List<String> fields = tuple.getAllFields();
             int size = fields.size();
             this.fieldIndexes = new int[size];
@@ -116,8 +114,8 @@ public class OLAPEnumerator implements Enumerator<Object[]> {
                 }
             }
 
-           tupleFieldsHash = hashCode;
-       }
+            tupleFieldsHash = hashCode;
+        }
 
         // set field value
         Object[] values = tuple.getAllValues();
@@ -141,11 +139,9 @@ public class OLAPEnumerator implements Enumerator<Object[]> {
         // bind dynamic variables
         bindVariable(olapContext.filter);
 
-
-
         // query storage engine
-        IStorageEngine storageEngine = StorageEngineFactory.getStorageEngine(olapContext.realization);
-        ITupleIterator iterator = storageEngine.search(olapContext.storageContext,olapContext.getSQLDigest());
+        IStorageEngine storageEngine = StorageEngineFactory.getStorageEngine(olapContext.realization, true);
+        ITupleIterator iterator = storageEngine.search(olapContext.storageContext, olapContext.getSQLDigest());
         if (logger.isDebugEnabled()) {
             logger.debug("return TupleIterator...");
         }
@@ -154,7 +150,6 @@ public class OLAPEnumerator implements Enumerator<Object[]> {
         this.tupleFieldsHash = -1;
         return iterator;
     }
-
 
     private void bindVariable(TupleFilter filter) {
         if (filter == null) {
