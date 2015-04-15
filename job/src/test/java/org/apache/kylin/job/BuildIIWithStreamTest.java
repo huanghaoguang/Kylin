@@ -67,7 +67,7 @@ import org.apache.kylin.job.hadoop.cube.StorageCleanupJob;
 import org.apache.kylin.job.hadoop.invertedindex.IICreateHTableJob;
 import org.apache.kylin.metadata.model.TblColRef;
 import org.apache.kylin.metadata.realization.RealizationStatusEnum;
-import org.apache.kylin.metadata.util.DateFormat;
+import org.apache.kylin.common.util.DateFormat;
 import org.apache.kylin.streaming.Stream;
 import org.apache.kylin.streaming.invertedindex.IIStreamBuilder;
 import org.junit.AfterClass;
