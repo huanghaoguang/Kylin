@@ -38,8 +38,8 @@
                 "app/components/angular-sweetalert/SweetAlert.js",
                 "app/components/underscore/underscore.js",
                 "app/components/angular-underscore/angular-underscore.js",
-                "app/components/angular-ui-sortable/jquery-ui.min.js",
-                "app/components/angular-ui-sortable/sortable.min.js",
+                "app/components/jquery-ui/jquery-ui.min.js",
+                "app/components/angular-ui-sortable/sortable.js",
                 "tmp/js/scripts.js"
             ],
             "dest": "tmp/js/scripts.min.js"
@@ -59,6 +59,7 @@
                 "app/components/angular-chosen-localytics/chosen-spinner.css",
                 "app/components/nvd3/nv.d3.min.css",
                 "app/css/AdminLTE.css",
+                "app/css/skins/_all-skins.min.css",
                 "app/components/bootstrap-sweetalert/lib/sweet-alert.css",
                 "tmp/css/styles.css"
             ],

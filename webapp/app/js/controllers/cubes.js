@@ -19,7 +19,7 @@
 'use strict';
 
 KylinApp
-    .controller('CubesCtrl', function ($scope, $q, $routeParams, $location, $modal, MessageService, CubeDescService, CubeService, JobService, UserService,  ProjectService,SweetAlert,loadingRequest,$log,cubeConfig,ProjectModel,ModelService,MetaModel,CubeList) {
+    .controller('CubesCtrl', function ($scope, $q, $routeParams, $location, $modal, MessageService, CubeDescService, CubeService, JobService, UserService,  ProjectService,SweetAlert,loadingRequest,$log,cubeConfig,ProjectModel,ModelService,MetaModel,CubeList,ModelDescService) {
 
         $scope.cubeConfig = cubeConfig;
         $scope.cubeList = CubeList;
@@ -59,7 +59,7 @@ KylinApp
             return CubeList.list(queryParam).then(function(resp){
                 $scope.loading = false;
                 defer.resolve(resp);
-                defer.promise;
+                return defer.promise;
             });
         };
 
@@ -83,8 +83,11 @@ KylinApp
                 CubeDescService.get({cube_name: cube.name}, {}, function (detail) {
                     if (detail.length > 0&&detail[0].hasOwnProperty("name")) {
                         cube.detail = detail[0];
-                        ModelService.get({model_name: cube.detail.model_name}, function (model) {
-                          cube.model = model
+                        ModelDescService.get({model_name: cube.detail.model_name}, function (model) {
+                          cube.model = model;
+                          $scope.metaModel ={
+                                model: model
+                            }
                           defer.resolve(cube.detail);
                        });
 
@@ -236,10 +239,6 @@ KylinApp
                     CubeService.drop({cubeId: cube.name}, {}, function (result) {
 
                     loadingRequest.hide();
-//                    var cubeIndex = CubeList.cubes.indexOf(cube);
-//                    if (cubeIndex > -1) {
-//                        $scope.cubes.splice(cubeIndex, 1);
-//                    }
                      CubeList.removeCube(cube);
                     SweetAlert.swal('Success!', 'Cube drop is done successfully', 'success');
 
@@ -365,7 +364,7 @@ KylinApp
         }
     });
 
-var jobSubmitCtrl = function ($scope, $modalInstance, CubeService, MessageService, $location, cube,MetaModel, buildType,SweetAlert,loadingRequest) {
+var jobSubmitCtrl = function ($scope, $modalInstance, CubeService, MessageService, $location, cube, buildType,SweetAlert,loadingRequest) {
     $scope.cube = cube;
     $scope.metaModel={
       model:cube.model
